@@ -1,11 +1,11 @@
 package cmds
 
 import (
-	ccmds "github.com/ProtoconNet/mitum-currency/v3/cmds"
-	"github.com/ProtoconNet/mitum-nft/operation/nft"
-	"github.com/ProtoconNet/mitum-nft/state"
-	"github.com/ProtoconNet/mitum-nft/types"
-	"github.com/ProtoconNet/mitum2/util/encoder"
+	ccmds "github.com/imfact-labs/currency-model/app/cmds"
+	"github.com/imfact-labs/mitum2/util/encoder"
+	"github.com/imfact-labs/nft-model/operation/nft"
+	"github.com/imfact-labs/nft-model/state"
+	"github.com/imfact-labs/nft-model/types"
 	"github.com/pkg/errors"
 )
 

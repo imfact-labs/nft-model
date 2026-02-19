@@ -1,14 +1,16 @@
-module github.com/ProtoconNet/mitum-nft
+module github.com/imfact-labs/nft-model
 
 go 1.24.0
 
 toolchain go1.24.9
 
 require (
-	github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20260204010352-2052afa8ce46
-	github.com/ProtoconNet/mitum2 v0.0.0-20251029064552-48aef1088f5f
 	github.com/alecthomas/kong v1.12.1
-	github.com/arl/statsviz v0.7.1
+	github.com/imfact-labs/currency-model v0.0.6
+	github.com/imfact-labs/currency-model/api v0.0.6
+	github.com/imfact-labs/currency-model/app v0.0.6
+	github.com/imfact-labs/currency-model/digest v0.0.6
+	github.com/imfact-labs/mitum2 v0.0.0-20260219060841-f51dacce1321
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.34.0
 	go.mongodb.org/mongo-driver/v2 v2.5.0
@@ -18,6 +20,7 @@ require (
 
 require (
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
+	github.com/arl/statsviz v0.7.1 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/beevik/ntp v1.4.3 // indirect
 	github.com/bluele/gcache v0.0.2 // indirect

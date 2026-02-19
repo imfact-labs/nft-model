@@ -1,13 +1,13 @@
 package digest
 
 import (
-	mongodbst "github.com/ProtoconNet/mitum-currency/v3/digest/mongodb"
-	bsonenc "github.com/ProtoconNet/mitum-currency/v3/digest/util/bson"
-	cstate "github.com/ProtoconNet/mitum-currency/v3/state"
-	"github.com/ProtoconNet/mitum-nft/state"
-	"github.com/ProtoconNet/mitum-nft/types"
-	"github.com/ProtoconNet/mitum2/base"
-	"github.com/ProtoconNet/mitum2/util/encoder"
+	mongodbst "github.com/imfact-labs/currency-model/digest/mongodb"
+	cstate "github.com/imfact-labs/currency-model/state"
+	"github.com/imfact-labs/currency-model/utils/bsonenc"
+	"github.com/imfact-labs/mitum2/base"
+	"github.com/imfact-labs/mitum2/util/encoder"
+	"github.com/imfact-labs/nft-model/state"
+	"github.com/imfact-labs/nft-model/types"
 )
 
 type NFTCollectionDoc struct {
