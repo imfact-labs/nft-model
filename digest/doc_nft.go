@@ -89,18 +89,12 @@ func (doc NFTDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	var hashArray []string
-	for _, v := range doc.st.Operations() {
-		hashArray = append(hashArray, v.String())
-	}
-
 	m["contract"] = parsedKey[1]
 	m["nft_idx"] = doc.nft.ID()
 	m["owner"] = doc.nft.Owner()
 	m["addresses"] = doc.addresses
 	m["istoken"] = true
 	m["height"] = doc.st.Height()
-	m["facthash"] = hashArray
 
 	return bsonenc.Marshal(m)
 }
