@@ -10,6 +10,7 @@ import (
 	"github.com/imfact-labs/mitum2/util"
 	"github.com/imfact-labs/nft-model/state"
 	"github.com/imfact-labs/nft-model/types"
+	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -106,7 +107,18 @@ func NFTsByCollection(
 	}
 
 	if factHash != "" {
-		match = append(match, bson.E{Key: "facthash", Value: factHash})
+		decoded := util.DecodeHash(factHash)
+		if len(decoded) != 32 {
+			return errors.New("invalid fact hash length")
+		}
+
+		match = append(match, bson.E{
+			Key: "d.operations",
+			Value: bson.Binary{
+				Subtype: 0x00,
+				Data:    decoded,
+			},
+		})
 	}
 
 	if offset != "" {
@@ -132,6 +144,9 @@ func NFTsByCollection(
 		}}},
 		bson.D{{Key: "$replaceRoot", Value: bson.D{
 			{Key: "newRoot", Value: "$doc"},
+		}}},
+		{{"$sort", bson.D{
+			{"nft_idx", sortDir},
 		}}},
 	}
 

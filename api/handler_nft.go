@@ -160,7 +160,6 @@ func HandleNFTs(hd *apic.Handlers, w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		hd.Log().Err(err).Str("contract", contract).Msg("failed to get nfts")
 		apic.HTTP2HandleError(w, err)
 
 		return
