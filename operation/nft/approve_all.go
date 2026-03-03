@@ -177,9 +177,17 @@ func (fact ApproveAllFact) ActiveContract() []base.Address {
 func (fact ApproveAllFact) DupKey() (map[types.DuplicationKeyType][]string, error) {
 	r := make(map[types.DuplicationKeyType][]string)
 	r[extras.DuplicationKeyTypeSender] = []string{fact.sender.String()}
+	dupSet := make(map[string]struct{}, len(fact.items))
 	for _, item := range fact.items {
-		r[processor.DuplicationTypeNFTApprove] = append(
-			r[processor.DuplicationTypeNFTApprove], fmt.Sprintf("%s:%s", item.contract.String(), fact.sender.String()))
+		key := fmt.Sprintf("%s:%s", item.contract.String(), fact.sender.String())
+		_, found := dupSet[key]
+		if !found {
+			r[processor.DuplicationTypeNFTApprove] = append(
+				r[processor.DuplicationTypeNFTApprove],
+				key,
+			)
+			dupSet[key] = struct{}{}
+		}
 	}
 
 	return r, nil
