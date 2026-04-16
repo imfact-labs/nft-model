@@ -160,20 +160,22 @@ func (t *TestDelegateProcessor) Print(fileName string,
 func (t *TestDelegateProcessor) MakeItem(
 	target test.Account, operator test.Account, mode ApproveAllMode, currency ctypes.CurrencyID, targetItems []ApproveAllItem,
 ) *TestDelegateProcessor {
-	item := NewApproveAllItem(target.Address(), operator.Address(), mode, currency)
+	_ = currency
+	item := NewApproveAllItem(target.Address(), operator.Address(), mode)
 	test.UpdateSlice[ApproveAllItem](item, targetItems)
 
 	return t
 }
 
 func (t *TestDelegateProcessor) MakeOperation(
-	sender base.Address, privatekey base.Privatekey, items []ApproveAllItem,
+	sender base.Address, privatekey base.Privatekey, items []ApproveAllItem, currency ctypes.CurrencyID,
 ) *TestDelegateProcessor {
 	op, _ := NewDelegate(
 		NewApproveAllFact(
 			[]byte("token"),
 			sender,
 			items,
+			currency,
 		))
 	_ = op.Sign(privatekey, t.NetworkID)
 	t.Op = op

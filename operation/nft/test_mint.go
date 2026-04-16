@@ -163,20 +163,22 @@ func (t *TestMintProcessor) MakeItem(
 	target test.Account, receiver test.Account, hash, uri string, creators types.Signers, currency ctypes.CurrencyID,
 	targetItems []MintItem,
 ) *TestMintProcessor {
-	item := NewMintItem(target.Address(), receiver.Address(), types.NFTHash(hash), types.URI(uri), creators, currency)
+	_ = currency
+	item := NewMintItem(target.Address(), receiver.Address(), types.NFTHash(hash), types.URI(uri), creators)
 	test.UpdateSlice[MintItem](item, targetItems)
 
 	return t
 }
 
 func (t *TestMintProcessor) MakeOperation(
-	sender base.Address, privatekey base.Privatekey, items []MintItem,
+	sender base.Address, privatekey base.Privatekey, items []MintItem, currency ctypes.CurrencyID,
 ) *TestMintProcessor {
 	op, _ := NewMint(
 		NewMintFact(
 			[]byte("token"),
 			sender,
 			items,
+			currency,
 		))
 	_ = op.Sign(privatekey, t.NetworkID)
 	t.Op = op

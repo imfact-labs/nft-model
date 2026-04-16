@@ -117,8 +117,8 @@ func (cmd *MintCommand) parseFlags() error {
 func (cmd *MintCommand) createOperation() (base.Operation, error) { // nolint:dupl
 	e := util.StringError("failed to create mint operation")
 
-	item := nft.NewMintItem(cmd.contract, cmd.receiver, cmd.hash, cmd.uri, cmd.creators, cmd.Currency.CID)
-	fact := nft.NewMintFact([]byte(cmd.Token), cmd.sender, []nft.MintItem{item})
+	item := nft.NewMintItem(cmd.contract, cmd.receiver, cmd.hash, cmd.uri, cmd.creators)
+	fact := nft.NewMintFact([]byte(cmd.Token), cmd.sender, []nft.MintItem{item}, cmd.Currency.CID)
 
 	op, err := nft.NewMint(fact)
 	if err != nil {

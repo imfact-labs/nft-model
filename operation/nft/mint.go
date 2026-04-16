@@ -20,16 +20,23 @@ var (
 
 type MintFact struct {
 	base.BaseFact
-	sender base.Address
-	items  []MintItem
+	sender   base.Address
+	items    []MintItem
+	currency types.CurrencyID
 }
 
-func NewMintFact(token []byte, sender base.Address, items []MintItem) MintFact {
+func NewMintFact(
+	token []byte,
+	sender base.Address,
+	items []MintItem,
+	currency types.CurrencyID,
+) MintFact {
 	bf := base.NewBaseFact(MintFactHint, token)
 	fact := MintFact{
 		BaseFact: bf,
 		sender:   sender,
 		items:    items,
+		currency: currency,
 	}
 	fact.SetHash(fact.GenerateHash())
 	return fact
@@ -39,6 +46,7 @@ func (fact MintFact) IsValid(b []byte) error {
 	if err := util.CheckIsValiders(nil, false,
 		fact.BaseHinter,
 		fact.sender,
+		fact.currency,
 	); err != nil {
 		return common.ErrFactInvalid.Wrap(err)
 	}
@@ -84,6 +92,7 @@ func (fact MintFact) Bytes() []byte {
 	return util.ConcatBytesSlice(
 		fact.Token(),
 		fact.sender.Bytes(),
+		fact.currency.Bytes(),
 		util.ConcatBytesSlice(is...),
 	)
 }
@@ -94,6 +103,10 @@ func (fact MintFact) Token() base.Token {
 
 func (fact MintFact) Sender() base.Address {
 	return fact.sender
+}
+
+func (fact MintFact) Currency() types.CurrencyID {
+	return fact.currency
 }
 
 func (fact MintFact) Addresses() ([]base.Address, error) {
@@ -112,31 +125,12 @@ func (fact MintFact) Addresses() ([]base.Address, error) {
 	return as, nil
 }
 
-func (fact MintFact) FeeBase() map[types.CurrencyID][]common.Big {
-	required := make(map[types.CurrencyID][]common.Big)
-
-	for i := range fact.items {
-		zeroBig := common.ZeroBig
-		cid := fact.items[i].Currency()
-		var amsTemp []common.Big
-		if ams, found := required[cid]; found {
-			ams = append(ams, zeroBig)
-			required[cid] = ams
-		} else {
-			amsTemp = append(amsTemp, zeroBig)
-			required[cid] = amsTemp
-		}
-	}
-
-	return required
+func (fact MintFact) FeeBase() (types.CurrencyID, int, int, bool) {
+	return fact.Currency(), len(fact.items), len(fact.Bytes()), extras.HasItem
 }
 
 func (fact MintFact) FeePayer() base.Address {
 	return fact.sender
-}
-
-func (fact MintFact) FeeItemCount() (uint, bool) {
-	return uint(len(fact.items)), extras.HasItem
 }
 
 func (fact MintFact) FactUser() base.Address {

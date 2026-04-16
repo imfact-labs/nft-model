@@ -165,20 +165,22 @@ func (t *TestTransferProcessor) MakeItem(
 	target test.Account, receiver test.Account, nftID uint64, currency ctypes.CurrencyID,
 	targetItems []TransferItem,
 ) *TestTransferProcessor {
-	item := NewTransferItem(target.Address(), receiver.Address(), nftID, currency)
+	_ = currency
+	item := NewTransferItem(target.Address(), receiver.Address(), nftID)
 	test.UpdateSlice[TransferItem](item, targetItems)
 
 	return t
 }
 
 func (t *TestTransferProcessor) MakeOperation(
-	sender base.Address, privatekey base.Privatekey, items []TransferItem,
+	sender base.Address, privatekey base.Privatekey, items []TransferItem, currency ctypes.CurrencyID,
 ) *TestTransferProcessor {
 	op, _ := NewTransfer(
 		NewTransferFact(
 			[]byte("token"),
 			sender,
 			items,
+			currency,
 		))
 	_ = op.Sign(privatekey, t.NetworkID)
 	t.Op = op

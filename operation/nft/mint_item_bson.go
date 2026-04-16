@@ -16,7 +16,6 @@ func (it MintItem) MarshalBSON() ([]byte, error) {
 			"hash":     it.hash,
 			"uri":      it.uri,
 			"creators": it.creators,
-			"currency": it.currency,
 		},
 	)
 }
@@ -28,7 +27,6 @@ type MintItemBSONUnmarshaler struct {
 	Hash     string   `bson:"hash"`
 	Uri      string   `bson:"uri"`
 	Creators bson.Raw `bson:"creators"`
-	Currency string   `bson:"currency"`
 }
 
 func (it *MintItem) DecodeBSON(b []byte, enc *bsonenc.Encoder) error {
@@ -42,7 +40,7 @@ func (it *MintItem) DecodeBSON(b []byte, enc *bsonenc.Encoder) error {
 		return common.DecorateError(err, common.ErrDecodeBson, *it)
 	}
 
-	if err := it.unpack(enc, ht, u.Contract, u.Receiver, u.Hash, u.Uri, u.Creators, u.Currency); err != nil {
+	if err := it.unpack(enc, ht, u.Contract, u.Receiver, u.Hash, u.Uri, u.Creators); err != nil {
 		return common.DecorateError(err, common.ErrDecodeBson, *it)
 	}
 	return nil

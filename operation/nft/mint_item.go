@@ -2,7 +2,6 @@ package nft
 
 import (
 	"github.com/imfact-labs/currency-model/common"
-	ctypes "github.com/imfact-labs/currency-model/types"
 	"github.com/imfact-labs/mitum2/base"
 	"github.com/imfact-labs/mitum2/util"
 	"github.com/imfact-labs/mitum2/util/hint"
@@ -13,7 +12,6 @@ import (
 type CollectionItem interface {
 	util.Byter
 	util.IsValider
-	Currency() ctypes.CurrencyID
 }
 
 var MintItemHint = hint.MustNewHint("mitum-nft-mint-item-v0.0.1")
@@ -25,7 +23,6 @@ type MintItem struct {
 	hash     types.NFTHash
 	uri      types.URI
 	creators types.Signers
-	currency ctypes.CurrencyID
 }
 
 func NewMintItem(
@@ -34,7 +31,6 @@ func NewMintItem(
 	hash types.NFTHash,
 	uri types.URI,
 	creators types.Signers,
-	currency ctypes.CurrencyID,
 ) MintItem {
 	return MintItem{
 		BaseHinter: hint.NewBaseHinter(MintItemHint),
@@ -43,7 +39,6 @@ func NewMintItem(
 		hash:       hash,
 		uri:        uri,
 		creators:   creators,
-		currency:   currency,
 	}
 }
 
@@ -54,7 +49,6 @@ func (it MintItem) Bytes() []byte {
 		it.hash.Bytes(),
 		it.uri.Bytes(),
 		it.creators.Bytes(),
-		it.currency.Bytes(),
 	)
 }
 
@@ -83,7 +77,6 @@ func (it MintItem) IsValid([]byte) error {
 		it.hash,
 		it.uri,
 		it.creators,
-		it.currency,
 	)
 }
 
@@ -113,8 +106,4 @@ func (it MintItem) Addresses() ([]base.Address, error) {
 	as = append(as, it.creators.Addresses()...)
 
 	return as, nil
-}
-
-func (it MintItem) Currency() ctypes.CurrencyID {
-	return it.currency
 }

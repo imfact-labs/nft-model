@@ -74,11 +74,12 @@ func (cmd *TransferCommand) parseFlags() error {
 func (cmd *TransferCommand) createOperation() (base.Operation, error) {
 	e := util.StringError("failed to create transfer operation")
 
-	item := nft.NewTransferItem(cmd.contract, cmd.receiver, cmd.NFT, cmd.Currency.CID)
+	item := nft.NewTransferItem(cmd.contract, cmd.receiver, cmd.NFT)
 	fact := nft.NewTransferFact(
 		[]byte(cmd.Token),
 		cmd.sender,
 		[]nft.TransferItem{item},
+		cmd.Currency.CID,
 	)
 
 	op, err := nft.NewTransfer(fact)

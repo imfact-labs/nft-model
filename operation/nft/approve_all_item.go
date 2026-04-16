@@ -2,7 +2,6 @@ package nft
 
 import (
 	"github.com/imfact-labs/currency-model/common"
-	"github.com/imfact-labs/currency-model/types"
 	"github.com/imfact-labs/mitum2/base"
 	"github.com/imfact-labs/mitum2/util"
 	"github.com/imfact-labs/mitum2/util/hint"
@@ -43,17 +42,14 @@ type ApproveAllItem struct {
 	contract base.Address
 	approved base.Address
 	mode     ApproveAllMode
-	currency types.CurrencyID
 }
 
-func NewApproveAllItem(
-	contract base.Address, approved base.Address, mode ApproveAllMode, currency types.CurrencyID) ApproveAllItem {
+func NewApproveAllItem(contract base.Address, approved base.Address, mode ApproveAllMode) ApproveAllItem {
 	return ApproveAllItem{
 		BaseHinter: hint.NewBaseHinter(ApproveAllItemHint),
 		contract:   contract,
 		approved:   approved,
 		mode:       mode,
-		currency:   currency,
 	}
 }
 
@@ -67,7 +63,6 @@ func (it ApproveAllItem) IsValid([]byte) error {
 		it.contract,
 		it.approved,
 		it.mode,
-		it.currency,
 	)
 }
 
@@ -76,7 +71,6 @@ func (it ApproveAllItem) Bytes() []byte {
 		it.contract.Bytes(),
 		it.approved.Bytes(),
 		it.mode.Bytes(),
-		it.currency.Bytes(),
 	)
 }
 
@@ -96,8 +90,4 @@ func (it ApproveAllItem) Addresses() ([]base.Address, error) {
 	as := make([]base.Address, 1)
 	as[0] = it.approved
 	return as, nil
-}
-
-func (it ApproveAllItem) Currency() types.CurrencyID {
-	return it.currency
 }

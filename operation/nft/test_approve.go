@@ -160,20 +160,22 @@ func (t *TestApproveProcessor) Print(fileName string,
 func (t *TestApproveProcessor) MakeItem(
 	target test.Account, approved test.Account, idx uint64, currency ctypes.CurrencyID, targetItems []ApproveItem,
 ) *TestApproveProcessor {
-	item := NewApproveItem(target.Address(), approved.Address(), idx, currency)
+	_ = currency
+	item := NewApproveItem(target.Address(), approved.Address(), idx)
 	test.UpdateSlice[ApproveItem](item, targetItems)
 
 	return t
 }
 
 func (t *TestApproveProcessor) MakeOperation(
-	sender base.Address, privatekey base.Privatekey, items []ApproveItem,
+	sender base.Address, privatekey base.Privatekey, items []ApproveItem, currency ctypes.CurrencyID,
 ) *TestApproveProcessor {
 	op, _ := NewApprove(
 		NewApproveFact(
 			[]byte("token"),
 			sender,
 			items,
+			currency,
 		))
 	_ = op.Sign(privatekey, t.NetworkID)
 	t.Op = op

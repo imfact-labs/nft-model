@@ -2,7 +2,6 @@ package nft
 
 import (
 	"github.com/imfact-labs/currency-model/common"
-	"github.com/imfact-labs/currency-model/types"
 	"github.com/imfact-labs/mitum2/base"
 	"github.com/imfact-labs/mitum2/util"
 	"github.com/imfact-labs/mitum2/util/encoder"
@@ -11,10 +10,9 @@ import (
 
 type ApproveItemJSONMarshaler struct {
 	hint.BaseHinter
-	Contract base.Address     `json:"contract"`
-	Approved base.Address     `json:"approved"`
-	NFTIdx   uint64           `json:"nft_idx"`
-	Currency types.CurrencyID `json:"currency"`
+	Contract base.Address `json:"contract"`
+	Approved base.Address `json:"approved"`
+	NFTIdx   uint64       `json:"nft_idx"`
 }
 
 func (it ApproveItem) MarshalJSON() ([]byte, error) {
@@ -23,7 +21,6 @@ func (it ApproveItem) MarshalJSON() ([]byte, error) {
 		Contract:   it.contract,
 		Approved:   it.approved,
 		NFTIdx:     it.nftIdx,
-		Currency:   it.currency,
 	})
 }
 
@@ -32,7 +29,6 @@ type ApproveItemJSONUnmarshaler struct {
 	Contract string    `json:"contract"`
 	Approved string    `json:"approved"`
 	NFTIdx   uint64    `json:"nft_idx"`
-	Currency string    `json:"currency"`
 }
 
 func (it *ApproveItem) DecodeJSON(b []byte, enc encoder.Encoder) error {
@@ -41,7 +37,7 @@ func (it *ApproveItem) DecodeJSON(b []byte, enc encoder.Encoder) error {
 		return common.DecorateError(err, common.ErrDecodeJson, *it)
 	}
 
-	if err := it.unpack(enc, u.Hint, u.Contract, u.Approved, u.NFTIdx, u.Currency); err != nil {
+	if err := it.unpack(enc, u.Hint, u.Contract, u.Approved, u.NFTIdx); err != nil {
 		return common.DecorateError(err, common.ErrDecodeJson, *it)
 	}
 

@@ -24,16 +24,23 @@ var MaxAddSignatureItems = 100
 
 type AddSignatureFact struct {
 	base.BaseFact
-	sender base.Address
-	items  []AddSignatureItem
+	sender   base.Address
+	items    []AddSignatureItem
+	currency types.CurrencyID
 }
 
-func NewAddSignatureFact(token []byte, sender base.Address, items []AddSignatureItem) AddSignatureFact {
+func NewAddSignatureFact(
+	token []byte,
+	sender base.Address,
+	items []AddSignatureItem,
+	currency types.CurrencyID,
+) AddSignatureFact {
 	bf := base.NewBaseFact(AddSignatureFactHint, token)
 	fact := AddSignatureFact{
 		BaseFact: bf,
 		sender:   sender,
 		items:    items,
+		currency: currency,
 	}
 	fact.SetHash(fact.GenerateHash())
 
@@ -51,7 +58,7 @@ func (fact AddSignatureFact) IsValid(b []byte) error {
 		return common.ErrArrayLen.Wrap(errors.Errorf("items over allowed, %d > %d", l, MaxAddSignatureItems))
 	}
 
-	if err := fact.sender.IsValid(nil); err != nil {
+	if err := util.CheckIsValiders(nil, false, fact.sender, fact.currency); err != nil {
 		return common.ErrFactInvalid.Wrap(err)
 	}
 
@@ -100,6 +107,7 @@ func (fact AddSignatureFact) Bytes() []byte {
 	return util.ConcatBytesSlice(
 		fact.Token(),
 		fact.sender.Bytes(),
+		fact.currency.Bytes(),
 		util.ConcatBytesSlice(is...),
 	)
 }
@@ -116,37 +124,22 @@ func (fact AddSignatureFact) Items() []AddSignatureItem {
 	return fact.items
 }
 
+func (fact AddSignatureFact) Currency() types.CurrencyID {
+	return fact.currency
+}
+
 func (fact AddSignatureFact) Addresses() ([]base.Address, error) {
 	as := make([]base.Address, 1)
 	as[0] = fact.sender
 	return as, nil
 }
 
-func (fact AddSignatureFact) FeeBase() map[types.CurrencyID][]common.Big {
-	required := make(map[types.CurrencyID][]common.Big)
-
-	for i := range fact.items {
-		zeroBig := common.ZeroBig
-		cid := fact.items[i].Currency()
-		var amsTemp []common.Big
-		if ams, found := required[cid]; found {
-			ams = append(ams, zeroBig)
-			required[cid] = ams
-		} else {
-			amsTemp = append(amsTemp, zeroBig)
-			required[cid] = amsTemp
-		}
-	}
-
-	return required
+func (fact AddSignatureFact) FeeBase() (types.CurrencyID, int, int, bool) {
+	return fact.Currency(), len(fact.items), len(fact.Bytes()), extras.HasItem
 }
 
 func (fact AddSignatureFact) FeePayer() base.Address {
 	return fact.sender
-}
-
-func (fact AddSignatureFact) FeeItemCount() (uint, bool) {
-	return uint(len(fact.items)), extras.HasItem
 }
 
 func (fact AddSignatureFact) FactUser() base.Address {

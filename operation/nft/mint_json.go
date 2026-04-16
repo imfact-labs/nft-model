@@ -5,6 +5,7 @@ import (
 
 	"github.com/imfact-labs/currency-model/common"
 	"github.com/imfact-labs/currency-model/operation/extras"
+	"github.com/imfact-labs/currency-model/types"
 	"github.com/imfact-labs/mitum2/base"
 	"github.com/imfact-labs/mitum2/util"
 	"github.com/imfact-labs/mitum2/util/encoder"
@@ -12,8 +13,9 @@ import (
 
 type MintFactJSONMarshaler struct {
 	base.BaseFactJSONMarshaler
-	Sender base.Address `json:"sender"`
-	Items  []MintItem   `json:"items"`
+	Sender   base.Address     `json:"sender"`
+	Items    []MintItem       `json:"items"`
+	Currency types.CurrencyID `json:"currency"`
 }
 
 func (fact MintFact) MarshalJSON() ([]byte, error) {
@@ -21,13 +23,15 @@ func (fact MintFact) MarshalJSON() ([]byte, error) {
 		BaseFactJSONMarshaler: fact.BaseFact.JSONMarshaler(),
 		Sender:                fact.sender,
 		Items:                 fact.items,
+		Currency:              fact.currency,
 	})
 }
 
 type MintFactJSONUnmarshaler struct {
 	base.BaseFactJSONUnmarshaler
-	Sender string          `json:"sender"`
-	Items  json.RawMessage `json:"items"`
+	Sender   string          `json:"sender"`
+	Items    json.RawMessage `json:"items"`
+	Currency string          `json:"currency"`
 }
 
 func (fact *MintFact) DecodeJSON(b []byte, enc encoder.Encoder) error {
@@ -38,7 +42,7 @@ func (fact *MintFact) DecodeJSON(b []byte, enc encoder.Encoder) error {
 
 	fact.BaseFact.SetJSONUnmarshaler(u.BaseFactJSONUnmarshaler)
 
-	if err := fact.unpack(enc, u.Sender, u.Items); err != nil {
+	if err := fact.unpack(enc, u.Sender, u.Items, u.Currency); err != nil {
 		return common.DecorateError(err, common.ErrDecodeJson, *fact)
 	}
 

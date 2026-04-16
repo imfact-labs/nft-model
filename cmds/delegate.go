@@ -83,9 +83,9 @@ func (cmd *DelegateCommand) parseFlags() error {
 func (cmd *DelegateCommand) createOperation() (base.Operation, error) {
 	e := util.StringError("failed to create delegate operation")
 
-	items := []nft.ApproveAllItem{nft.NewApproveAllItem(cmd.contract, cmd.operator, cmd.mode, cmd.Currency.CID)}
+	items := []nft.ApproveAllItem{nft.NewApproveAllItem(cmd.contract, cmd.operator, cmd.mode)}
 
-	fact := nft.NewApproveAllFact([]byte(cmd.Token), cmd.sender, items)
+	fact := nft.NewApproveAllFact([]byte(cmd.Token), cmd.sender, items, cmd.Currency.CID)
 
 	op, err := nft.NewDelegate(fact)
 	if err != nil {

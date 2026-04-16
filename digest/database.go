@@ -113,11 +113,8 @@ func NFTsByCollection(
 		}
 
 		match = append(match, bson.E{
-			Key: "d.operations",
-			Value: bson.Binary{
-				Subtype: 0x00,
-				Data:    decoded,
-			},
+			Key:   "d.operations",
+			Value: decoded,
 		})
 	}
 

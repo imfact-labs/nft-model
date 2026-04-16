@@ -98,12 +98,12 @@ func (ipp *AddSignatureItemProcessor) Process(
 
 	st, err := cstate.ExistsState(state.StateKeyNFT(ipp.item.Contract(), nid), "nft", getStateFunc)
 	if err != nil {
-		return nil, errors.Errorf("nft not found, %v: %w", nid, err)
+		return nil, errors.Errorf("nft not found, %v: %v", nid, err)
 	}
 
 	nv, err := state.StateNFTValue(st)
 	if err != nil {
-		return nil, errors.Errorf("nft value not found, %v: %w", nid, err)
+		return nil, errors.Errorf("nft value not found, %v: %v", nid, err)
 	}
 
 	signers := nv.Creators()
@@ -120,13 +120,13 @@ func (ipp *AddSignatureItemProcessor) Process(
 
 	sns := &signers
 	if err := sns.SetSigner(signer); err != nil {
-		return nil, errors.Errorf("failed to set signer for signers, %v: %w", signer, err)
+		return nil, errors.Errorf("failed to set signer for signers, %v: %v", signer, err)
 	}
 
 	n := types.NewNFT(nv.ID(), nv.Active(), nv.Owner(), nv.NFTHash(), nv.URI(), nv.Approved(), *sns)
 
 	if err := n.IsValid(nil); err != nil {
-		return nil, errors.Errorf("invalid nft, %v: %w", n.ID(), err)
+		return nil, errors.Errorf("invalid nft, %v: %v", n.ID(), err)
 	}
 
 	sts := make([]base.StateMergeValue, 1)

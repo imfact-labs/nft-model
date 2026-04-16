@@ -6,7 +6,7 @@ import (
 
 	"github.com/imfact-labs/currency-model/common"
 	cstate "github.com/imfact-labs/currency-model/state"
-	ccstate "github.com/imfact-labs/currency-model/state/currency"
+	statec "github.com/imfact-labs/currency-model/state/currency"
 	ctypes "github.com/imfact-labs/currency-model/types"
 	"github.com/imfact-labs/mitum2/base"
 	"github.com/imfact-labs/mitum2/util"
@@ -93,7 +93,7 @@ func (ipp *ApproveItemProcessor) PreProcess(
 	}
 
 	if !nv.Owner().Equal(ipp.sender) {
-		if err := cstate.CheckExistsState(ccstate.AccountStateKey(nv.Owner()), getStateFunc); err != nil {
+		if err := cstate.CheckExistsState(statec.AccountStateKey(nv.Owner()), getStateFunc); err != nil {
 			return e.Wrap(
 				common.ErrAccountNF.Wrap(errors.Errorf("nft owner %v for nft idx %v", nv.Owner(), ipp.item.nftIdx)))
 		}

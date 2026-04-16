@@ -72,12 +72,13 @@ func (cmd *ApproveCommand) parseFlags() error {
 func (cmd *ApproveCommand) createOperation() (base.Operation, error) {
 	e := util.StringError("failed to create approve operation")
 
-	item := nft.NewApproveItem(cmd.contract, cmd.approved, cmd.NFTidx, cmd.Currency.CID)
+	item := nft.NewApproveItem(cmd.contract, cmd.approved, cmd.NFTidx)
 
 	fact := nft.NewApproveFact(
 		[]byte(cmd.Token),
 		cmd.sender,
 		[]nft.ApproveItem{item},
+		cmd.Currency.CID,
 	)
 
 	op, err := nft.NewApprove(fact)

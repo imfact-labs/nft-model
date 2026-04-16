@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/imfact-labs/currency-model/common"
-	ctypes "github.com/imfact-labs/currency-model/types"
 	"github.com/imfact-labs/mitum2/base"
 	"github.com/imfact-labs/mitum2/util"
 	"github.com/imfact-labs/mitum2/util/encoder"
@@ -14,12 +13,11 @@ import (
 
 type MintItemJSONMarshaler struct {
 	hint.BaseHinter
-	Contract base.Address      `json:"contract"`
-	Receiver base.Address      `json:"receiver"`
-	Hash     types.NFTHash     `json:"hash"`
-	Uri      types.URI         `json:"uri"`
-	Creators types.Signers     `json:"creators"`
-	Currency ctypes.CurrencyID `json:"currency"`
+	Contract base.Address  `json:"contract"`
+	Receiver base.Address  `json:"receiver"`
+	Hash     types.NFTHash `json:"hash"`
+	Uri      types.URI     `json:"uri"`
+	Creators types.Signers `json:"creators"`
 }
 
 func (it MintItem) MarshalJSON() ([]byte, error) {
@@ -30,7 +28,6 @@ func (it MintItem) MarshalJSON() ([]byte, error) {
 		Hash:       it.hash,
 		Uri:        it.uri,
 		Creators:   it.creators,
-		Currency:   it.currency,
 	})
 }
 
@@ -41,7 +38,6 @@ type MintItemJSONUnmarshaler struct {
 	Hash     string          `json:"hash"`
 	Uri      string          `json:"uri"`
 	Creators json.RawMessage `json:"creators"`
-	Currency string          `json:"currency"`
 }
 
 func (it *MintItem) DecodeJSON(b []byte, enc encoder.Encoder) error {
@@ -50,7 +46,7 @@ func (it *MintItem) DecodeJSON(b []byte, enc encoder.Encoder) error {
 		return common.DecorateError(err, common.ErrDecodeJson, *it)
 	}
 
-	if err := it.unpack(enc, u.Hint, u.Contract, u.Receiver, u.Hash, u.Uri, u.Creators, u.Currency); err != nil {
+	if err := it.unpack(enc, u.Hint, u.Contract, u.Receiver, u.Hash, u.Uri, u.Creators); err != nil {
 		return common.DecorateError(err, common.ErrDecodeJson, *it)
 	}
 

@@ -1,7 +1,6 @@
 package nft
 
 import (
-	"github.com/imfact-labs/currency-model/types"
 	"github.com/imfact-labs/mitum2/base"
 	"github.com/imfact-labs/mitum2/util"
 	"github.com/imfact-labs/mitum2/util/hint"
@@ -13,15 +12,13 @@ type AddSignatureItem struct {
 	hint.BaseHinter
 	contract base.Address
 	nftIdx   uint64
-	currency types.CurrencyID
 }
 
-func NewAddSignatureItem(contract base.Address, nfxIdx uint64, currency types.CurrencyID) AddSignatureItem {
+func NewAddSignatureItem(contract base.Address, nfxIdx uint64) AddSignatureItem {
 	return AddSignatureItem{
 		BaseHinter: hint.NewBaseHinter(AddSignatureItemHint),
 		contract:   contract,
 		nftIdx:     nfxIdx,
-		currency:   currency,
 	}
 }
 
@@ -29,7 +26,6 @@ func (it AddSignatureItem) Bytes() []byte {
 	return util.ConcatBytesSlice(
 		it.contract.Bytes(),
 		util.Uint64ToBytes(it.nftIdx),
-		it.currency.Bytes(),
 	)
 }
 
@@ -37,7 +33,6 @@ func (it AddSignatureItem) IsValid([]byte) error {
 	return util.CheckIsValiders(nil, false,
 		it.BaseHinter,
 		it.contract,
-		it.currency,
 	)
 }
 
@@ -47,8 +42,4 @@ func (it AddSignatureItem) NFT() uint64 {
 
 func (it AddSignatureItem) Contract() base.Address {
 	return it.contract
-}
-
-func (it AddSignatureItem) Currency() types.CurrencyID {
-	return it.currency
 }

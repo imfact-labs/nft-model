@@ -2,7 +2,6 @@ package nft
 
 import (
 	"github.com/imfact-labs/currency-model/common"
-	ctypes "github.com/imfact-labs/currency-model/types"
 	"github.com/imfact-labs/mitum2/base"
 	"github.com/imfact-labs/mitum2/util/encoder"
 	"github.com/imfact-labs/mitum2/util/hint"
@@ -15,7 +14,6 @@ func (it *MintItem) unpack(
 	ht hint.Hint,
 	ca, ra, hs, uri string,
 	bcr []byte,
-	cid string,
 ) error {
 	it.BaseHinter = hint.NewBaseHinter(ht)
 	it.hash = types.NFTHash(hs)
@@ -42,8 +40,6 @@ func (it *MintItem) unpack(
 	} else {
 		it.creators = creators
 	}
-
-	it.currency = ctypes.CurrencyID(cid)
 
 	return nil
 }

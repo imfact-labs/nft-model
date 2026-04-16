@@ -13,7 +13,6 @@ func (it AddSignatureItem) MarshalBSON() ([]byte, error) {
 			"_hint":    it.Hint().String(),
 			"contract": it.contract,
 			"nft_idx":  it.nftIdx,
-			"currency": it.currency,
 		},
 	)
 }
@@ -22,7 +21,6 @@ type AddSignatureItemBSONUnmarshaler struct {
 	Hint     string `bson:"_hint"`
 	Contract string `bson:"contract"`
 	NFTIdx   uint64 `bson:"nft_idx"`
-	Currency string `bson:"currency"`
 }
 
 func (it *AddSignatureItem) DecodeBSON(b []byte, enc *bsonenc.Encoder) error {
@@ -36,7 +34,7 @@ func (it *AddSignatureItem) DecodeBSON(b []byte, enc *bsonenc.Encoder) error {
 		return common.DecorateError(err, common.ErrDecodeBson, *it)
 	}
 
-	if err := it.unpack(enc, ht, u.Contract, u.NFTIdx, u.Currency); err != nil {
+	if err := it.unpack(enc, ht, u.Contract, u.NFTIdx); err != nil {
 		return common.DecorateError(err, common.ErrDecodeBson, *it)
 	}
 	return nil

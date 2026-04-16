@@ -23,16 +23,23 @@ var MaxApproveAllItems = 100
 
 type ApproveAllFact struct {
 	base.BaseFact
-	sender base.Address
-	items  []ApproveAllItem
+	sender   base.Address
+	items    []ApproveAllItem
+	currency types.CurrencyID
 }
 
-func NewApproveAllFact(token []byte, sender base.Address, items []ApproveAllItem) ApproveAllFact {
+func NewApproveAllFact(
+	token []byte,
+	sender base.Address,
+	items []ApproveAllItem,
+	currency types.CurrencyID,
+) ApproveAllFact {
 	bf := base.NewBaseFact(ApproveAllFactHint, token)
 	fact := ApproveAllFact{
 		BaseFact: bf,
 		sender:   sender,
 		items:    items,
+		currency: currency,
 	}
 	fact.SetHash(fact.GenerateHash())
 
@@ -51,7 +58,7 @@ func (fact ApproveAllFact) IsValid(b []byte) error {
 			common.ErrValOOR.Wrap(errors.Errorf("items over allowed, %d > %d", l, MaxApproveAllItems)))
 	}
 
-	if err := fact.sender.IsValid(nil); err != nil {
+	if err := util.CheckIsValiders(nil, false, fact.sender, fact.currency); err != nil {
 		return common.ErrFactInvalid.Wrap(err)
 	}
 
@@ -105,6 +112,7 @@ func (fact ApproveAllFact) Bytes() []byte {
 	return util.ConcatBytesSlice(
 		fact.Token(),
 		fact.sender.Bytes(),
+		fact.currency.Bytes(),
 		util.ConcatBytesSlice(is...),
 	)
 }
@@ -115,6 +123,10 @@ func (fact ApproveAllFact) Token() base.Token {
 
 func (fact ApproveAllFact) Sender() base.Address {
 	return fact.sender
+}
+
+func (fact ApproveAllFact) Currency() types.CurrencyID {
+	return fact.currency
 }
 
 func (fact ApproveAllFact) Addresses() ([]base.Address, error) {
@@ -131,31 +143,12 @@ func (fact ApproveAllFact) Addresses() ([]base.Address, error) {
 	return as, nil
 }
 
-func (fact ApproveAllFact) FeeBase() map[types.CurrencyID][]common.Big {
-	required := make(map[types.CurrencyID][]common.Big)
-
-	for i := range fact.items {
-		zeroBig := common.ZeroBig
-		cid := fact.items[i].Currency()
-		var amsTemp []common.Big
-		if ams, found := required[cid]; found {
-			ams = append(ams, zeroBig)
-			required[cid] = ams
-		} else {
-			amsTemp = append(amsTemp, zeroBig)
-			required[cid] = amsTemp
-		}
-	}
-
-	return required
+func (fact ApproveAllFact) FeeBase() (types.CurrencyID, int, int, bool) {
+	return fact.Currency(), len(fact.items), len(fact.Bytes()), extras.HasItem
 }
 
 func (fact ApproveAllFact) FeePayer() base.Address {
 	return fact.sender
-}
-
-func (fact ApproveAllFact) FeeItemCount() (uint, bool) {
-	return uint(len(fact.items)), extras.HasItem
 }
 
 func (fact ApproveAllFact) FactUser() base.Address {

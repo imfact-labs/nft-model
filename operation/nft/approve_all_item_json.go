@@ -2,7 +2,6 @@ package nft
 
 import (
 	"github.com/imfact-labs/currency-model/common"
-	"github.com/imfact-labs/currency-model/types"
 	"github.com/imfact-labs/mitum2/base"
 	"github.com/imfact-labs/mitum2/util"
 	"github.com/imfact-labs/mitum2/util/encoder"
@@ -11,10 +10,9 @@ import (
 
 type ApproveAllItemJSONMarshaler struct {
 	hint.BaseHinter
-	Contract base.Address     `json:"contract"`
-	Approved base.Address     `json:"approved"`
-	Mode     ApproveAllMode   `json:"mode"`
-	Currency types.CurrencyID `json:"currency"`
+	Contract base.Address   `json:"contract"`
+	Approved base.Address   `json:"approved"`
+	Mode     ApproveAllMode `json:"mode"`
 }
 
 func (it ApproveAllItem) MarshalJSON() ([]byte, error) {
@@ -23,7 +21,6 @@ func (it ApproveAllItem) MarshalJSON() ([]byte, error) {
 		Contract:   it.contract,
 		Approved:   it.approved,
 		Mode:       it.mode,
-		Currency:   it.currency,
 	})
 }
 
@@ -32,7 +29,6 @@ type ApproveAllItemJSONUnmarshaler struct {
 	Contract string    `json:"contract"`
 	Approved string    `json:"approved"`
 	Mode     string    `json:"mode"`
-	Currency string    `json:"currency"`
 }
 
 func (it *ApproveAllItem) DecodeJSON(b []byte, enc encoder.Encoder) error {
@@ -41,7 +37,7 @@ func (it *ApproveAllItem) DecodeJSON(b []byte, enc encoder.Encoder) error {
 		return common.DecorateError(err, common.ErrDecodeJson, *it)
 	}
 
-	if err := it.unmarshal(enc, u.Hint, u.Contract, u.Approved, u.Mode, u.Currency); err != nil {
+	if err := it.unmarshal(enc, u.Hint, u.Contract, u.Approved, u.Mode); err != nil {
 		return common.DecorateError(err, common.ErrDecodeJson, *it)
 	}
 
