@@ -169,7 +169,6 @@ func (fact ApproveAllFact) ActiveContract() []base.Address {
 
 func (fact ApproveAllFact) DupKey() (map[types.DuplicationKeyType][]string, error) {
 	r := make(map[types.DuplicationKeyType][]string)
-	r[extras.DuplicationKeyTypeSender] = []string{fact.sender.String()}
 	dupSet := make(map[string]struct{}, len(fact.items))
 	for _, item := range fact.items {
 		key := fmt.Sprintf("%s:%s", item.contract.String(), fact.sender.String())
@@ -192,6 +191,16 @@ func (fact ApproveAllFact) Items() []ApproveAllItem {
 
 type ApproveAll struct {
 	extras.ExtendedOperation
+}
+
+func (op ApproveAll) DupKey() (map[types.DuplicationKeyType][]string, error) {
+	r := make(map[types.DuplicationKeyType][]string)
+
+	if err := extras.AddOperationFeePayerDupKeys(r, op); err != nil {
+		return nil, err
+	}
+
+	return r, nil
 }
 
 func NewDelegate(fact ApproveAllFact) (ApproveAll, error) {

@@ -160,7 +160,6 @@ func (fact AddSignatureFact) ActiveContract() []base.Address {
 
 func (fact AddSignatureFact) DupKey() (map[types.DuplicationKeyType][]string, error) {
 	r := make(map[types.DuplicationKeyType][]string)
-	r[extras.DuplicationKeyTypeSender] = []string{fact.sender.String()}
 	for _, item := range fact.items {
 		r[processor.DuplicationTypeContractNFT] = append(
 			r[processor.DuplicationTypeContractNFT], fmt.Sprintf("%s:%v", item.contract.String(), item.nftIdx))
@@ -171,6 +170,16 @@ func (fact AddSignatureFact) DupKey() (map[types.DuplicationKeyType][]string, er
 
 type AddSignature struct {
 	extras.ExtendedOperation
+}
+
+func (op AddSignature) DupKey() (map[types.DuplicationKeyType][]string, error) {
+	r := make(map[types.DuplicationKeyType][]string)
+
+	if err := extras.AddOperationFeePayerDupKeys(r, op); err != nil {
+		return nil, err
+	}
+
+	return r, nil
 }
 
 func NewAddSignature(fact AddSignatureFact) (AddSignature, error) {

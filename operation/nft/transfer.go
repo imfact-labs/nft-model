@@ -172,7 +172,6 @@ func (fact TransferFact) ActiveContract() []base.Address {
 
 func (fact TransferFact) DupKey() (map[types.DuplicationKeyType][]string, error) {
 	r := make(map[types.DuplicationKeyType][]string)
-	r[extras.DuplicationKeyTypeSender] = []string{fact.sender.String()}
 	for _, item := range fact.items {
 		r[processor.DuplicationTypeContractNFT] = append(
 			r[processor.DuplicationTypeContractNFT], fmt.Sprintf("%s:%v", item.contract.String(), item.nftIdx))
@@ -183,6 +182,16 @@ func (fact TransferFact) DupKey() (map[types.DuplicationKeyType][]string, error)
 
 type Transfer struct {
 	extras.ExtendedOperation
+}
+
+func (op Transfer) DupKey() (map[types.DuplicationKeyType][]string, error) {
+	r := make(map[types.DuplicationKeyType][]string)
+
+	if err := extras.AddOperationFeePayerDupKeys(r, op); err != nil {
+		return nil, err
+	}
+
+	return r, nil
 }
 
 func NewTransfer(fact TransferFact) (Transfer, error) {
